@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->text('question');
             $table->text('question_image');
             $table->string('indicator', 100);
-            $table->enum('order', ['f', 'uf']);
+            $table->enum('order', ['f', 'uf'])->nullable();
             $table->enum('question_type', ['text_fuf', 'option_image', 'option_text', 'image_text']);
             $table->timestamps();
 
