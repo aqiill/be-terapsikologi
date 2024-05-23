@@ -19,4 +19,5 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix' => 'api/'], function () use ($router) {
     $router->get('generate/{student_id}/{school_id}', 'ReportController@generate');
+    $router->get('report/{student_id}', 'ReportController@report');
 });
