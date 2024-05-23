@@ -8,6 +8,7 @@ use App\Models\Answers;
 use App\Models\AnswerKeys;
 use App\Models\Questions;
 use App\Models\Summaries;
+use App\Models\Students;
 
 class ReportController extends Controller
 {
@@ -18,6 +19,20 @@ class ReportController extends Controller
     {
         if ($request->header('api-key') !== $this->api_key) {
             return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if ($school_id == 0) {
+            $check = Students::where('id', $student_id)->first();
+            if ($check->school_id != null) {
+                return response()->json(['message' => 'Data siswa tidak ditemukan di sekolah tersebut'], 404);
+            } else {
+                $school_id = null;
+            }
+        } else {
+            $check = Students::where('id', $student_id)->where('school_id', $school_id)->exists();
+            if (!$check) {
+                return response()->json(['message' => 'Data siswa tidak ditemukan di sekolah tersebut'], 404);
+            }
         }
 
         $student_answers = Answers::where('student_id', $student_id)->get();
@@ -35,12 +50,12 @@ class ReportController extends Controller
         // Menetapkan hasil kategori berdasarkan aturan yang ditentukan
         $categoryResults = $this->applyCategoryRules($totalScores);
 
-
         if (Summaries::where('student_id', $student_id)->exists()) {
             return response()->json(['message' => 'Data sudah ada'], 400);
         }
+
         // Menyimpan data summaries
-        $this->saveSummary($student_id, $school_id, $categoryResults);
+        $this->saveSummary($student_id, $school_id, $categoryResults, $totalScores);
 
         return response()->json(['message' => 'Generate Report Berhasil']);
     }
@@ -140,9 +155,20 @@ class ReportController extends Controller
         return 41;  // Untuk kategori umum
     }
 
-    private function saveSummary($student_id, $school_id, $categoryResults)
+    private function saveSummary($student_id, $school_id, $categoryResults, $totalScores)
     {
-        $data = array_merge(['student_id' => $student_id, 'school_id' => $school_id], $categoryResults);
+        $total = $this->mapCategoryScores($totalScores);
+        $data = array_merge(['student_id' => $student_id, 'school_id' => $school_id], $categoryResults, $total);
         Summaries::create($data);
+    }
+
+    private function mapCategoryScores($totalScores)
+    {
+        $newKeys = array_map(function ($key) {
+            return 'total_' . $key;
+        }, array_keys($totalScores));
+
+        $newTotalScores = array_combine($newKeys, array_values($totalScores));
+        return $newTotalScores;
     }
 }
