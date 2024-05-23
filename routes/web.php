@@ -16,3 +16,7 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->group(['prefix' => 'api/'], function () use ($router) {
+    $router->get('generate/{student_id}/{school_id}', 'ReportController@generate');
+});
