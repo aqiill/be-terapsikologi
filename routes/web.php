@@ -22,4 +22,6 @@ $router->group(['prefix' => 'api/'], function () use ($router) {
     $router->get('report/{student_id}', 'ReportController@report');
 
     $router->get('test/{student_id}', 'TestController@index');
+
+    $router->post('login', 'AuthController@login');
 });
