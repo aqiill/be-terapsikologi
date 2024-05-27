@@ -92,11 +92,11 @@ class TestController extends Controller
 
         $first_id = $this->calculateFirstId($question_id);
 
-        $student_answers = Answers::where('question_id', $first_id)->where('student_id', $student_id)->first();
+        $time_student_answers = Answers::where('question_id', $first_id)->where('student_id', $student_id)->first();
 
-        if ($student_answers) {
+        if ($time_student_answers) {
             $current_time = strtotime(date('Y-m-d H:i:s'));
-            $time_answered = strtotime($student_answers->created_at);
+            $time_answered = strtotime($time_student_answers->created_at);
             $difference = $current_time - $time_answered;
 
             if ($difference > $time_limit) {
@@ -109,6 +109,7 @@ class TestController extends Controller
         $category_id = $this->determineCategory($question_id);
 
         $question = Questions::where('id', $question_id)->first();
+        $student_answers = Answers::where('question_id', $question->id)->where('student_id', $student_id)->first();
         $answer_choices = AnswerKeys::where('question_id', $question_id)->first();
         $total_question = Questions::whereIn('category_id', $category_id)->orderBy('id', 'asc')->get();
 
@@ -165,6 +166,41 @@ class TestController extends Controller
         } elseif ($id <= 306) {
             return [17];
         }
+    }
+
+    public function submitUnified(Request $request, $question_id, $student_id)
+    {
+        if (Students::where('id', $student_id)->count() == 0) {
+            return response()->json(['message' => 'Data siswa tidak ditemukan'], 404);
+        }
+
+        if ($this->checkBio($student_id)) {
+            return response()->json(['message' => 'Data biodata siswa belum lengkap'], 400);
+        }
+
+        $this->validate($request, [
+            'answer' => 'required'
+        ]);
+
+        $answer = Answers::updateOrCreate(
+            ['question_id' => $question_id, 'student_id' => $student_id],
+            ['answer' => $request->answer]
+        );
+
+        $message = 'Lanjut ke soal selanjutnya!';
+        if (in_array($question_id, [60, 114, 174, 204, 234, 264, 286, 306])) {
+            $message = "Sub Tes ini selesai! Lanjutkan ke sub tes berikutnya.";
+        }
+
+        if ($question_id > 306) {
+            $message = 'Semua Sub Tes Selesai.';
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'next_id' => $question_id > 306 ? null : $question_id + 1
+        ], 200);
     }
     //
 }
