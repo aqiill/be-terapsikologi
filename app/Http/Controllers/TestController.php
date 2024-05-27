@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\AnswerKeys;
 use App\Models\Answers;
 use App\Models\Summaries;
+use App\Models\Students;
+use App\Models\Questions;
 use Illuminate\Http\Request;
 
 class TestController extends Controller
@@ -14,6 +17,18 @@ class TestController extends Controller
      *
      * @return void
      */
+    public function checkBio($student_id)
+    {
+        $user = Students::where('id', $student_id)->first();
+
+        if (
+            is_null($user->student_name) || is_null($user->birth_date) ||
+            is_null($user->gender) || is_null($user->address) ||
+            is_null($user->province) || is_null($user->city) || is_null($user->contact)
+        ) {
+            return true;
+        }
+    }
 
     public function index(Request $request, $student_id)
     {
@@ -56,6 +71,100 @@ class TestController extends Controller
         return response()->json($data, 200);
     }
 
+    public function formUnified(Request $request, $question_id, $student_id)
+    {
+        if (Students::where('id', $student_id)->count() == 0) {
+            return response()->json(['message' => 'Data siswa tidak ditemukan'], 404);
+        }
 
+        if ($this->checkBio($student_id)) {
+            return response()->json(['message' => 'Data biodata siswa belum lengkap'], 400);
+        }
+
+        if ($question_id > 306 || $question_id <= 0) {
+            return response()->json(['message' => 'Data pertanyaan tidak ditemukan'], 404);
+        }
+
+        $time_limit = 600;
+        if ($question_id > 114) {
+            $time_limit = 360;
+        }
+
+        $first_id = $this->calculateFirstId($question_id);
+
+        $student_answers = Answers::where('question_id', $first_id)->where('student_id', $student_id)->first();
+
+        if ($student_answers) {
+            $current_time = strtotime(date('Y-m-d H:i:s'));
+            $time_answered = strtotime($student_answers->created_at);
+            $difference = $current_time - $time_answered;
+
+            if ($difference > $time_limit) {
+                return response()->json(['message' => 'Times out, go to next tes!'], 400);
+            }
+
+        }
+
+        $number = $question_id % 60 ? $question_id % 60 : 60;
+        $category_id = $this->determineCategory($question_id);
+
+        $question = Questions::where('id', $question_id)->first();
+        $answer_choices = AnswerKeys::where('question_id', $question_id)->first();
+        $total_question = Questions::whereIn('category_id', $category_id)->orderBy('id', 'asc')->get();
+
+        $data = [
+            "number" => $number,
+            "question_id" => $question_id,
+            "total_question" => $total_question->count(),
+            "question" => $question,
+            "student_answer" => $student_answers ? $student_answers->answer : null,
+            "last_id" => $total_question->last()->id,
+            "answer_choices" => $answer_choices ? $answer_choices : null,
+        ];
+
+        return response()->json($data, 200);
+    }
+
+    private function calculateFirstId($id)
+    {
+        if ($id <= 60) {
+            return 1;
+        } elseif ($id <= 114) {
+            return 61;
+        } elseif ($id <= 174) {
+            return 115;
+        } elseif ($id <= 204) {
+            return 175;
+        } elseif ($id <= 234) {
+            return 205;
+        } elseif ($id <= 264) {
+            return 235;
+        } elseif ($id <= 286) {
+            return 265;
+        } elseif ($id <= 306) {
+            return 287;
+        }
+    }
+
+    private function determineCategory($id)
+    {
+        if ($id <= 60) {
+            return [1, 2, 3, 4, 5];
+        } elseif ($id <= 114) {
+            return [6, 7, 8, 9, 10, 11];
+        } elseif ($id <= 174) {
+            return [12];
+        } elseif ($id <= 204) {
+            return [13];
+        } elseif ($id <= 234) {
+            return [14];
+        } elseif ($id <= 264) {
+            return [15];
+        } elseif ($id <= 286) {
+            return [16];
+        } elseif ($id <= 306) {
+            return [17];
+        }
+    }
     //
 }
