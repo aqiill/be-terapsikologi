@@ -13,15 +13,9 @@ use App\Models\Majors;
 
 class ReportController extends Controller
 {
-    // private api-key qwe123qwe#
-    private $api_key = 'qwe123qwe#';
 
     public function generate(Request $request, $student_id, $school_id)
     {
-        if ($request->header('api-key') !== $this->api_key) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
         if ($school_id == 0) {
             $check = Students::where('id', $student_id)->first();
             if ($check->school_id != null) {
@@ -240,10 +234,6 @@ class ReportController extends Controller
 
     public function report(Request $request, $student_id)
     {
-        if ($request->header('api-key') !== $this->api_key) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
         $summary = Summaries::where('student_id', $student_id)->first();
 
         if (!$summary) {

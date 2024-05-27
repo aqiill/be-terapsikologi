@@ -17,11 +17,15 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => 'api/'], function () use ($router) {
-    $router->get('generate/{student_id}/{school_id}', 'ReportController@generate');
-    $router->get('report/{student_id}', 'ReportController@report');
+$router->group(['middleware' => 'auth.api'], function () use ($router) {
+    $router->group(['prefix' => 'api/'], function () use ($router) {
+        $router->get('generate/{student_id}/{school_id}', 'ReportController@generate');
+        $router->get('report/{student_id}', 'ReportController@report');
 
-    $router->get('test/{student_id}', 'TestController@index');
+        $router->get('test/{student_id}', 'TestController@index');
+        $router->post('login', 'AuthController@login');
 
-    $router->post('login', 'AuthController@login');
+    });
+
+    // $router->post('/register', 'RegistrationController@registerProcess');
 });

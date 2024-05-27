@@ -114,4 +114,9 @@ $app->router->group([
     require __DIR__ . '/../routes/web.php';
 });
 
+$app->routeMiddleware([
+    'auth.api' => App\Http\Middleware\ApiKeyMiddleware::class,
+]);
+
+
 return $app;

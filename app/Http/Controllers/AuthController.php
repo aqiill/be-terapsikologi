@@ -12,11 +12,6 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        $apiKey = $request->header('api-key');
-        if ($apiKey !== 'qwe123qwe#') {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
         $email = $request->input('email');
         $password = $request->input('password');
 

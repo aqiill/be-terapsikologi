@@ -14,16 +14,9 @@ class TestController extends Controller
      *
      * @return void
      */
-    private $api_key = 'qwe123qwe#';
 
     public function index(Request $request, $student_id)
     {
-        $api_key = $request->header('api_key');
-
-        // Validasi API key
-        if ($api_key !== $this->api_key) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
 
         $test = Answers::where('student_id', $student_id)->max('question_id');
 
