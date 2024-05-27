@@ -24,6 +24,7 @@ $router->group(['middleware' => 'auth.api'], function () use ($router) {
 
         $router->get('test/{student_id}', 'TestController@index');
         $router->post('login', 'AuthController@login');
+        $router->post('register', 'AuthController@register');
 
     });
 
