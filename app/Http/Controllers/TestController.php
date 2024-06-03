@@ -35,9 +35,9 @@ class TestController extends Controller
 
         $test = Answers::where('student_id', $student_id)->max('question_id');
 
-        if (!$test) {
-            return response()->json(['message' => 'Data jawaban siswa tidak ditemukan'], 404);
-        }
+        // if (!$test) {
+        //     return response()->json(['message' => 'Data jawaban siswa tidak ditemukan'], 404);
+        // }
 
         $least_time = Answers::where('student_id', $student_id)->orderBy('created_at', 'asc')->first();
 
@@ -116,7 +116,7 @@ class TestController extends Controller
         $data = [
             "number" => $number,
             "question_id" => $question_id,
-            "total_question" => $total_question->count(),
+            "total_question" => $total_question,
             "question" => $question,
             "student_answer" => $student_answers ? $student_answers->answer : null,
             "last_id" => $total_question->last()->id,
@@ -184,7 +184,7 @@ class TestController extends Controller
 
         $answer = Answers::updateOrCreate(
             ['question_id' => $question_id, 'student_id' => $student_id],
-            ['answer' => $request->answer]
+            ['answer' => $request->answer, 'created_at' => $request->created_at]
         );
 
         $message = 'Lanjut ke soal selanjutnya!';

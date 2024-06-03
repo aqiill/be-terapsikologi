@@ -9,9 +9,11 @@ class Answers extends Model
 {
     use HasFactory;
     protected $table = 'answers';
+    public $timestamps = false;
     protected $fillable = [
         'question_id',
         'student_id',
         'answer',
+        'created_at',
     ];
 }
