@@ -41,7 +41,23 @@ class TestController extends Controller
 
         $least_time = Answers::where('student_id', $student_id)->orderBy('created_at', 'asc')->first();
 
-        $question_ids = [1, 61, 115, 175, 205, 235, 265, 287];
+        // Define ranges
+        $ranges = [
+            range(1, 60),
+            range(61, 114),
+            range(115, 174),
+            range(175, 204),
+            range(205, 234),
+            range(235, 264),
+            range(265, 286),
+            range(287, 306),
+        ];
+
+        // Flatten the ranges into a single array of question_ids
+        $question_ids = [];
+        foreach ($ranges as $range) {
+            $question_ids = array_merge($question_ids, $range);
+        }
 
         $first_answers = Answers::where('student_id', $student_id)
             ->whereIn('question_id', $question_ids)
@@ -51,22 +67,27 @@ class TestController extends Controller
 
         $summary_count = Summaries::where('student_id', $student_id)->count();
 
-        // Menyiapkan data untuk response
+        // Define the start of each range for easier mapping
+        $range_starts = [1, 61, 115, 175, 205, 235, 265, 287];
+
+        // Map first answers to each category based on the start of the range
+        $time_first_answers = [];
+        $categories = ['ocean', 'riasec', 'visual', 'induction', 'quatitative_reasoning', 'math', 'reading', 'memory'];
+
+        foreach ($range_starts as $index => $start) {
+            $time_first_answers[$categories[$index]] = $first_answers->filter(function ($item, $key) use ($start) {
+                return $key >= $start && $key < ($start + 60); // Assuming ranges of 60 for each category
+            })->first();
+        }
+
+        // data
         $data = [
             'test' => $test,
             'summary' => $summary_count,
             'least_time' => $least_time,
-            'time_first_answers' => [
-                'ocean' => $first_answers[1] ?? null,
-                'riasec' => $first_answers[61] ?? null,
-                'visual' => $first_answers[115] ?? null,
-                'induction' => $first_answers[175] ?? null,
-                'quatitative_reasoning' => $first_answers[205] ?? null,
-                'math' => $first_answers[235] ?? null,
-                'reading' => $first_answers[265] ?? null,
-                'memory' => $first_answers[287] ?? null,
-            ],
+            'time_first_answers' => $time_first_answers,
         ];
+
 
         return response()->json($data, 200);
     }
@@ -179,7 +200,8 @@ class TestController extends Controller
         }
 
         $this->validate($request, [
-            'answer' => 'required'
+            'answer' => 'required',
+            'created_at' => 'required'
         ]);
 
         $answer = Answers::updateOrCreate(
