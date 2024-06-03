@@ -134,9 +134,12 @@ class TestController extends Controller
         $answer_choices = AnswerKeys::where('question_id', $question_id)->first();
         $total_question = Questions::whereIn('category_id', $category_id)->orderBy('id', 'asc')->get();
 
+        $first_answers = Answers::where('student_id', $student_id)->first();
+
         $data = [
             "number" => $number,
             "question_id" => $question_id,
+            "first_answers" => $first_answers ? $first_answers->created_at : null,
             "total_question" => $total_question,
             "question" => $question,
             "student_answer" => $student_answers ? $student_answers->answer : null,
