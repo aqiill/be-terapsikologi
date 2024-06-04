@@ -150,6 +150,7 @@ class TestController extends Controller
             "question" => $question,
             "student_answer" => $student_answers ? $student_answers->answer : null,
             "last_id" => $total_question->last()->id,
+            "first_id" => $total_question->first()->id,
             "answer_choices" => $answer_choices ? $answer_choices : null,
         ];
 
