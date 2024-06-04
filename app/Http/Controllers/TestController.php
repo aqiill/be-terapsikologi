@@ -9,6 +9,7 @@ use App\Models\Summaries;
 use App\Models\Students;
 use App\Models\Questions;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TestController extends Controller
 {
@@ -132,7 +133,16 @@ class TestController extends Controller
         $question = Questions::where('id', $question_id)->first();
         $student_answers = Answers::where('question_id', $question->id)->where('student_id', $student_id)->first();
         $answer_choices = AnswerKeys::where('question_id', $question_id)->first();
-        $total_question = Questions::whereIn('category_id', $category_id)->orderBy('id', 'asc')->get();
+        // $total_question = Questions::whereIn('category_id', $category_id)->orderBy('id', 'asc')->get();
+
+        $total_question = Questions::leftJoin('answers', function ($join) use ($student_id) {
+            $join->on('questions.id', '=', 'answers.question_id')
+                ->where('answers.student_id', '=', $student_id);
+        })
+            ->select('questions.*', DB::raw('IF(answers.answer IS NOT NULL, true, false) as chosen'))
+            ->whereIn('questions.category_id', $category_id)
+            ->orderBy('questions.id', 'asc')
+            ->get();
 
         // $first_answers = Answers::where('student_id', $student_id)->first();
         $first_answers = Answers::join('questions', 'answers.question_id', '=', 'questions.id')
