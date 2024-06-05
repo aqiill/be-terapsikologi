@@ -127,7 +127,25 @@ class TestController extends Controller
 
         }
 
-        $number = $question_id % 60 ? $question_id % 60 : 60;
+        // $number = $question_id % 60 ? $question_id % 60 : 60;
+        if ($question_id > 0 && $question_id <= 60) {
+            $number = $question_id;
+        } elseif ($question_id > 60 && $question_id <= 114) {
+            $number = $question_id - 60;
+        } elseif ($question_id > 114 && $question_id <= 174) {
+            $number = $question_id - 114;
+        } elseif ($question_id > 174 && $question_id <= 204) {
+            $number = $question_id - 174;
+        } elseif ($question_id > 204 && $question_id <= 234) {
+            $number = $question_id - 204;
+        } elseif ($question_id > 234 && $question_id <= 264) {
+            $number = $question_id - 234;
+        } elseif ($question_id > 264 && $question_id <= 286) {
+            $number = $question_id - 264;
+        } elseif ($question_id > 286 && $question_id <= 306) {
+            $number = $question_id - 286;
+        }
+
         $category_id = $this->determineCategory($question_id);
 
         $question = Questions::where('id', $question_id)->first();
