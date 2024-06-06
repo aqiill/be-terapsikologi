@@ -126,4 +126,10 @@ class AuthController extends Controller
         ];
     }
 
+    public function schools()
+    {
+        $schools = Schools::all();
+        return response()->json($schools);
+    }
+
 }

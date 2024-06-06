@@ -28,6 +28,7 @@ $router->group(['middleware' => 'auth.api'], function () use ($router) {
 
         $router->post('login', 'AuthController@login');
         $router->post('register', 'AuthController@register');
+        $router->get('schools', 'AuthController@schools');
 
     });
 
