@@ -30,6 +30,8 @@ $router->group(['middleware' => 'auth.api'], function () use ($router) {
         $router->post('register', 'AuthController@register');
         $router->get('schools', 'AuthController@schools');
 
+        $router->post('profile/{student_id}', 'ProfileController@updateProfile');
+
     });
 
     // $router->post('/register', 'RegistrationController@registerProcess');
