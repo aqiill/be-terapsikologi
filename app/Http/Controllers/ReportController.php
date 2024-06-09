@@ -333,4 +333,15 @@ class ReportController extends Controller
         return $results_per_classification;
     }
 
+    public function checkSummary(Request $request, $student_id)
+    {
+        $summary = Summaries::where('student_id', $student_id)->first();
+
+        if (!$summary) {
+            return response()->json(['message' => 'Anda belum mengerjakan/mengenerate Tes!'], 404);
+        }
+
+        return response()->json($summary);
+    }
+
 }

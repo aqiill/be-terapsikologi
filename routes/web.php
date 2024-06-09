@@ -21,6 +21,7 @@ $router->group(['middleware' => 'auth.api'], function () use ($router) {
     $router->group(['prefix' => 'api/'], function () use ($router) {
         $router->get('generate/{student_id}/{school_id}', 'ReportController@generate');
         $router->get('report/{student_id}', 'ReportController@report');
+        $router->get('checkSummary/{student_id}', 'ReportController@checkSummary');
 
         $router->get('test/{student_id}', 'TestController@index');
         $router->get('test/form/{question_id}/{student_id}', 'TestController@formUnified');
