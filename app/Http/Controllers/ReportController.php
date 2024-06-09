@@ -338,7 +338,9 @@ class ReportController extends Controller
         $summary = Summaries::where('student_id', $student_id)->first();
 
         if (!$summary) {
-            return response()->json(['message' => 'Anda belum mengerjakan/mengenerate Tes!'], 404);
+            return response()->json([
+                'message' => 'Anda belum mengerjakan/mengenerate Tes!'
+            ]);
         }
 
         return response()->json($summary);
