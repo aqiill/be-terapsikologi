@@ -132,4 +132,52 @@ class AuthController extends Controller
         return response()->json($schools);
     }
 
+    public function changePassword(Request $request)
+    {
+        $data = $request->all();
+
+        // Validate data
+        $validator = Validator::make($data, [
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+            'new_password' => 'required|min:6'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Change password failed: ' . implode(' ', $validator->errors()->all())
+            ], 400);
+        }
+
+        $user = Administrators::where('admin_email', $data['email'])->first();
+        $userType = 'administrator';
+
+        if (!$user) {
+            $user = Schools::where('school_email', $data['email'])->first();
+            $userType = 'school';
+        }
+
+        if (!$user) {
+            $user = Students::where('student_email', $data['email'])->first();
+            $userType = 'student';
+        }
+
+        if (!$user || !Hash::check($data['password'], $user->password)) {
+            return response()->json(['error' => 'Invalid credentials', 'message' => 'Change password failed'], 401);
+        }
+
+        $new_password = Hash::make($data['new_password']);
+
+        if ($userType == 'administrator') {
+            Administrators::where('admin_email', $data['email'])->update(['password' => $new_password]);
+        } else if ($userType == 'school') {
+            Schools::where('school_email', $data['email'])->update(['password' => $new_password]);
+        } else if ($userType == 'student') {
+            Students::where('student_email', $data['email'])->update(['password' => $new_password]);
+        }
+
+        return response()->json(['message' => 'Change password successful', 'user' => $user, 'user_type' => $userType]);
+    }
+
 }
