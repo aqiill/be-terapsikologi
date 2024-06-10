@@ -180,10 +180,6 @@ class TestController extends Controller
             ->orderBy('answers.created_at', 'asc')
             ->first();
 
-        dd($first_answers);
-        die();
-
-
         $data = [
             "number" => $number,
             "question_id" => $question_id,
