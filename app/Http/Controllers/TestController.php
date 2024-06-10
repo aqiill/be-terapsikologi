@@ -165,7 +165,11 @@ class TestController extends Controller
         // $first_answers = Answers::where('student_id', $student_id)->first();
         $first_answers = Answers::join('questions', 'answers.question_id', '=', 'questions.id')
             ->where('answers.student_id', $student_id)
-            ->whereIn('questions.category_id', $category_id)
+            ->whereIn('questions.category_id', function ($query) use ($question_id) {
+                $query->select('category_id')
+                    ->from('questions')
+                    ->where('id', $question_id);
+            })
             ->orderBy('answers.created_at', 'asc')
             ->select('answers.created_at as waktu_jawab')
             ->first();
@@ -173,7 +177,7 @@ class TestController extends Controller
         $data = [
             "number" => $number,
             "question_id" => $question_id,
-            "first_answers" => $first_answers ? $first_answers->created_at : null,
+            "first_answers" => $first_answers ? $first_answers->waktu_jawab : null,
             "total_question" => $total_question,
             "question" => $question,
             "student_answer" => $student_answers ? $student_answers->answer : null,
