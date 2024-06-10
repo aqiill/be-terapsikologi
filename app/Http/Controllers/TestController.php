@@ -167,8 +167,20 @@ class TestController extends Controller
             ->where('answers.student_id', $student_id)
             ->whereIn('questions.category_id', function ($query) use ($question_id) {
                 $query->select('category_id')
-                    ->from('questions')
-                    ->where('id', $question_id);
+                    ->from(function ($unionQuery) use ($question_id) {
+                        $unionQuery->selectRaw('category_id FROM (SELECT 1 AS category_id UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5) AS category_range')
+                            ->whereRaw('(SELECT category_id FROM questions WHERE id = ?) BETWEEN 1 AND 5', [$question_id])
+                            ->unionAll(
+                                DB::table(DB::raw('(SELECT 6 AS category_id UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10) AS category_range'))
+                                    ->selectRaw('category_id')
+                                    ->whereRaw('(SELECT category_id FROM questions WHERE id = ?) BETWEEN 6 AND 11', [$question_id])
+                            )
+                            ->unionAll(
+                                DB::table(DB::raw('(SELECT (SELECT category_id FROM questions WHERE id = ?) AS category_id) AS category_range', [$question_id]))
+                                    ->selectRaw('category_id')
+                                    ->whereRaw('(SELECT category_id FROM questions WHERE id = ?) NOT BETWEEN 1 AND 10', [$question_id])
+                            );
+                    }, 'category_ids');
             })
             ->orderBy('answers.created_at', 'asc')
             ->select('answers.created_at as waktu_jawab')
