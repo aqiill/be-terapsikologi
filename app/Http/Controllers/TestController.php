@@ -163,28 +163,26 @@ class TestController extends Controller
             ->get();
 
         // $first_answers = Answers::where('student_id', $student_id)->first();
+        $questionCategoryId = Questions::where('id', $question_id)->value('category_id');
+
+        if ($questionCategoryId <= 5) {
+            $category_id = [1, 2, 3, 4, 5];
+        } elseif ($questionCategoryId <= 11) {
+            $category_id = [6, 7, 8, 9, 10, 11];
+        } else {
+            $category_id = [$questionCategoryId]; // Ensure it's an array
+        }
+
         $first_answers = Answers::join('questions', 'answers.question_id', '=', 'questions.id')
-            ->where('answers.student_id', $student_id)
-            ->whereIn('questions.category_id', function ($query) use ($question_id) {
-                $query->select('category_id')
-                    ->from(function ($unionQuery) use ($question_id) {
-                        $unionQuery->selectRaw('category_id FROM (SELECT 1 AS category_id UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5) AS category_range')
-                            ->whereRaw('(SELECT category_id FROM questions WHERE id = ?) BETWEEN 1 AND 5', [$question_id])
-                            ->unionAll(
-                                DB::table(DB::raw('(SELECT 6 AS category_id UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9 UNION ALL SELECT 10) AS category_range'))
-                                    ->selectRaw('category_id')
-                                    ->whereRaw('(SELECT category_id FROM questions WHERE id = ?) BETWEEN 6 AND 11', [$question_id])
-                            )
-                            ->unionAll(
-                                DB::table(DB::raw('(SELECT (SELECT category_id FROM questions WHERE id = ?) AS category_id) AS category_range', [$question_id]))
-                                    ->selectRaw('category_id')
-                                    ->whereRaw('(SELECT category_id FROM questions WHERE id = ?) NOT BETWEEN 1 AND 10', [$question_id])
-                            );
-                    }, 'category_ids');
-            })
-            ->orderBy('answers.created_at', 'asc')
             ->select('answers.created_at as waktu_jawab')
+            ->where('answers.student_id', $student_id)
+            ->whereIn('questions.category_id', $category_id)
+            ->orderBy('answers.created_at', 'asc')
             ->first();
+
+        dd($first_answers);
+        die();
+
 
         $data = [
             "number" => $number,
