@@ -33,16 +33,13 @@ class TestController extends Controller
 
     public function index(Request $request, $student_id)
     {
-
+        // Check if there are any answers at all
         $test = Answers::where('student_id', $student_id)->max('question_id');
+        if (!$test) {
+            return response()->json(['message' => 'Data jawaban siswa tidak ditemukan'], 404);
+        }
 
-        // if (!$test) {
-        //     return response()->json(['message' => 'Data jawaban siswa tidak ditemukan'], 404);
-        // }
-
-        $least_time = Answers::where('student_id', $student_id)->orderBy('created_at', 'asc')->first();
-
-        // Define ranges
+        // Define ranges for each category
         $ranges = [
             range(1, 60),
             range(61, 114),
@@ -54,44 +51,38 @@ class TestController extends Controller
             range(287, 306),
         ];
 
-        // Flatten the ranges into a single array of question_ids
-        $question_ids = [];
-        foreach ($ranges as $range) {
-            $question_ids = array_merge($question_ids, $range);
-        }
-
-        $first_answers = Answers::where('student_id', $student_id)
-            ->whereIn('question_id', $question_ids)
-            ->orderBy('created_at', 'asc')
-            ->get()
-            ->keyBy('question_id');
-
-        $summary_count = Summaries::where('student_id', $student_id)->count();
-
-        // Define the start of each range for easier mapping
-        $range_starts = [1, 61, 115, 175, 205, 235, 265, 287];
-
-        // Map first answers to each category based on the start of the range
-        $time_first_answers = [];
         $categories = ['ocean', 'riasec', 'visual', 'induction', 'quatitative_reasoning', 'math', 'reading', 'memory'];
 
-        foreach ($range_starts as $index => $start) {
-            $time_first_answers[$categories[$index]] = $first_answers->filter(function ($item, $key) use ($start) {
-                return $key >= $start && $key < ($start + 60); // Assuming ranges of 60 for each category
-            })->first();
+        $time_first_answers = [];
+        foreach ($ranges as $index => $range) {
+            $first_answer = Answers::where('student_id', $student_id)
+                ->whereIn('question_id', $range)
+                ->orderBy('created_at', 'asc')
+                ->first();
+
+            $category_name = $categories[$index] ?? "unknown";
+            $time_first_answers[$category_name] = $first_answer;
         }
 
-        // data
+        // Total number of summaries for the student
+        $summary_count = Summaries::where('student_id', $student_id)->count();
+
+        // Fetching the answer which was created the earliest
+        $least_time = Answers::where('student_id', $student_id)
+            ->orderBy('created_at', 'asc')
+            ->first();
+
+        // Data to be returned
         $data = [
             'test' => $test,
-            'summary' => $summary_count,
+            'summary_count' => $summary_count,
             'least_time' => $least_time,
             'time_first_answers' => $time_first_answers,
         ];
 
-
         return response()->json($data, 200);
     }
+
 
     public function formUnified(Request $request, $question_id, $student_id)
     {
