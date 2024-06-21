@@ -20,7 +20,7 @@ class Schools extends Model
         'province',
         'city',
         'address',
-        'operator_name',
+        'counselor_name',
         'contact',
         'role',
         'payment_status',

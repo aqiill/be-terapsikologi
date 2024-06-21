@@ -101,7 +101,7 @@ class AuthController extends Controller
                 'province' => '13',
                 'city' => '1376',
                 'address' => 'Jl. Jalan Jeruk No 54',
-                'operator_name' => $manualSchoolName,
+                'counselor_name' => $manualSchoolName,
                 'contact' => '081234567890',
                 'role' => 'school',
                 'payment_status' => 'n',
