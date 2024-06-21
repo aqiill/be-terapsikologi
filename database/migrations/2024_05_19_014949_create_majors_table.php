@@ -11,27 +11,27 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('majors', function (Blueprint $table) {
-            $table->id();
-            $table->string('classification');
+            $table->increments('id');
+            $table->string('classification', 100);
             $table->string('field', 100);
             $table->string('major', 100);
-            $table->string('o', 100);
-            $table->string('ce', 100);
-            $table->string('ea', 100);
-            $table->string('an', 100);
-            $table->string('n', 100);
-            $table->string('r', 100);
-            $table->string('i', 100);
-            $table->string('a', 100);
-            $table->string('s', 100);
-            $table->string('e', 100);
-            $table->string('c', 100);
-            $table->string('math', 100);
-            $table->string('visual', 100);
-            $table->string('memory', 100);
-            $table->string('reading', 100);
-            $table->string('induction', 100);
-            $table->string('quantitative_reasoning', 100);
+            $table->tinyInteger('o')->unsigned()->default(0);
+            $table->tinyInteger('ce')->unsigned()->default(0);
+            $table->tinyInteger('ea')->unsigned()->default(0);
+            $table->tinyInteger('an')->unsigned()->default(0);
+            $table->tinyInteger('n')->unsigned()->default(0);
+            $table->tinyInteger('r')->unsigned()->default(0);
+            $table->tinyInteger('i')->unsigned()->default(0);
+            $table->tinyInteger('a')->unsigned()->default(0);
+            $table->tinyInteger('s')->unsigned()->default(0);
+            $table->tinyInteger('e')->unsigned()->default(0);
+            $table->tinyInteger('c')->unsigned()->default(0);
+            $table->tinyInteger('math')->unsigned()->default(0);
+            $table->tinyInteger('visual')->unsigned()->default(0);
+            $table->tinyInteger('memory')->unsigned()->default(0);
+            $table->tinyInteger('reading')->unsigned()->default(0);
+            $table->tinyInteger('induction')->unsigned()->default(0);
+            $table->tinyInteger('quantitative_reasoning')->unsigned()->default(0);
             $table->text('major_description');
             $table->timestamps();
         });

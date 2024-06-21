@@ -12,13 +12,13 @@ return new class extends Migration {
     {
         Schema::create('answer_keys', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('question_id');
-            $table->string('correct_answer', 100);
-            $table->string('option_1');
-            $table->string('option_2');
-            $table->string('option_3');
-            $table->string('option_4');
-            $table->string('option_5');
+            $table->unsignedInteger('question_id');
+            $table->char('correct_answer', 1);
+            $table->text('option_1');
+            $table->text('option_2');
+            $table->text('option_3');
+            $table->text('option_4');
+            $table->text('option_5');
             $table->timestamps();
 
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');

@@ -13,46 +13,47 @@ return new class extends Migration {
         Schema::create('summaries', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->string('school_id', 100)->nullable();
-            $table->string('o', 100);
-            $table->integer('total_o');
-            $table->string('ce', 100);
-            $table->integer('total_ce');
-            $table->string('ea', 100);
-            $table->integer('total_ea');
-            $table->string('an', 100);
-            $table->integer('total_an');
-            $table->string('n', 100);
-            $table->integer('total_n');
-            $table->string('r', 100);
-            $table->integer('total_r');
-            $table->string('i', 100);
-            $table->integer('total_i');
-            $table->string('a', 100);
-            $table->integer('total_a');
-            $table->string('s', 100);
-            $table->integer('total_s');
-            $table->string('e', 100);
-            $table->integer('total_e');
-            $table->string('c', 100);
-            $table->integer('total_c');
-            $table->string('math', 100);
-            $table->integer('total_math');
-            $table->string('visual', 100);
-            $table->integer('total_visual');
-            $table->string('memory', 100);
-            $table->integer('total_memory');
-            $table->string('reading', 100);
-            $table->integer('total_reading');
-            $table->string('induction', 100);
-            $table->integer('total_induction');
-            $table->string('quantitative_reasoning', 100);
-            $table->integer('total_quantitative_reasoning');
+            $table->unsignedInteger('school_id')->nullable(); // Corrected definition
+            $table->tinyInteger('o')->unsigned()->default(0);
+            $table->tinyInteger('total_o');
+            $table->tinyInteger('ce')->unsigned()->default(0);
+            $table->tinyInteger('total_ce');
+            $table->tinyInteger('ea')->unsigned()->default(0);
+            $table->tinyInteger('total_ea');
+            $table->tinyInteger('an')->unsigned()->default(0);
+            $table->tinyInteger('total_an');
+            $table->tinyInteger('n')->unsigned()->default(0);
+            $table->tinyInteger('total_n');
+            $table->tinyInteger('r')->unsigned()->default(0);
+            $table->tinyInteger('total_r');
+            $table->tinyInteger('i')->unsigned()->default(0);
+            $table->tinyInteger('total_i');
+            $table->tinyInteger('a')->unsigned()->default(0);
+            $table->tinyInteger('total_a');
+            $table->tinyInteger('s')->unsigned()->default(0);
+            $table->tinyInteger('total_s');
+            $table->tinyInteger('e')->unsigned()->default(0);
+            $table->tinyInteger('total_e');
+            $table->tinyInteger('c')->unsigned()->default(0);
+            $table->tinyInteger('total_c');
+            $table->tinyInteger('math')->unsigned()->default(0);
+            $table->tinyInteger('total_math');
+            $table->tinyInteger('visual')->unsigned()->default(0);
+            $table->tinyInteger('total_visual');
+            $table->tinyInteger('memory')->unsigned()->default(0);
+            $table->tinyInteger('total_memory');
+            $table->tinyInteger('reading')->unsigned()->default(0);
+            $table->tinyInteger('total_reading');
+            $table->tinyInteger('induction')->unsigned()->default(0);
+            $table->tinyInteger('total_induction');
+            $table->tinyInteger('quantitative_reasoning')->unsigned()->default(0);
+            $table->tinyInteger('total_quantitative_reasoning');
             $table->timestamps();
 
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
         });
     }
+
 
     /**
      * Reverse the migrations.

@@ -11,15 +11,15 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('campuses', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('campus_name', 100);
             $table->string('majors', 100);
             $table->string('degree', 100);
-            $table->unsignedBigInteger('fee_1');
-            $table->unsignedBigInteger('fee_2');
-            $table->unsignedBigInteger('fee_3');
-            $table->unsignedBigInteger('fee_4');
-            $table->unsignedBigInteger('fee_5');
+            $table->unsignedInteger('fee_1');
+            $table->unsignedInteger('fee_2');
+            $table->unsignedInteger('fee_3');
+            $table->unsignedInteger('fee_4');
+            $table->unsignedInteger('fee_5');
             $table->timestamps();
         });
     }

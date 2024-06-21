@@ -11,12 +11,12 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('questions', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('category_id');
+            $table->increments('id');
+            $table->unsignedTinyInteger('category_id');
             $table->text('question');
-            $table->text('question_image');
+            $table->text('question_image')->nullable();
             $table->string('indicator', 100);
-            $table->enum('order', ['f', 'uf'])->nullable();
+            $table->enum('order', ['f', 'uf', ''])->nullable();
             $table->enum('question_type', ['text_fuf', 'option_image', 'option_text', 'image_text']);
             $table->timestamps();
 

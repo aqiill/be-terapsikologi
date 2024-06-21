@@ -12,8 +12,8 @@ return new class extends Migration {
     {
         Schema::create('enthusiasts', function (Blueprint $table) {
             $table->id();
-            $table->string('campus_id', 100);
-            $table->string('year', 100);
+            $table->integer('campus_id');
+            $table->year('year');
             $table->integer('capacity');
             $table->integer('applicants');
             $table->timestamps();

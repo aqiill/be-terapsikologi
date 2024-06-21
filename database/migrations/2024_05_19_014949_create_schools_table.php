@@ -11,16 +11,16 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('schools', function (Blueprint $table) {
-            $table->id();
+            $table->increments('id');
             $table->string('school_name', 100);
             $table->integer('npsn');
-            $table->string('school_email', 100)->unique();
-            $table->string('password', 100)->nullable();
-            $table->string('province', 100);
-            $table->string('city', 100);
-            $table->string('address', 100);
-            $table->string('operator_name', 100);
-            $table->string('contact', 100);
+            $table->string('school_email', 255)->unique();
+            $table->string('password', 255)->nullable();
+            $table->smallInteger('province')->unsigned();
+            $table->smallInteger('city')->unsigned();
+            $table->string('address', 255);
+            $table->string('counselor_name', 100);
+            $table->string('contact', 15);
             $table->enum('role', ['school']);
             $table->enum('payment_status', ['n', 'y']);
             $table->timestamps();

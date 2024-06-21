@@ -11,10 +11,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('administrators', function (Blueprint $table) {
-            $table->id();
+            $table->tinyIncrements('id')->unsigned();
             $table->string('admin_name', 100);
-            $table->string('admin_email', 100)->unique();
-            $table->string('password', 100);
+            $table->string('admin_email', 255)->unique();
+            $table->string('password', 255);
             $table->enum('role', ['administrator']);
             $table->timestamps();
         });

@@ -12,18 +12,18 @@ return new class extends Migration {
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('school_id')->nullable();
+            $table->unsignedInteger('school_id')->nullable();
             $table->enum('school_status', ['accepted', 'rejected', 'pending']);
             $table->string('student_name', 100)->nullable();
-            $table->string('final_score', 100);
-            $table->string('student_email', 100)->unique();
-            $table->string('password', 100);
-            $table->string('birth_date', 100)->nullable();
+            $table->tinyInteger('final_score');
+            $table->string('student_email', 255)->unique();
+            $table->string('password', 255);
+            $table->date('birth_date')->nullable();
             $table->enum('gender', ['M', 'F'])->nullable();
-            $table->string('province', 100)->nullable();
-            $table->string('city', 100)->nullable();
-            $table->string('address', 100)->nullable();
-            $table->string('contact', 100)->nullable();
+            $table->smallInteger('province')->nullable();
+            $table->smallInteger('city')->nullable();
+            $table->string('address', 255)->nullable();
+            $table->string('contact', 15)->nullable();
             $table->enum('payment_status', ['n', 'y']);
             $table->enum('recommendation_type', ['kemdikbud', 'kemenag', 'poltekkes', 'kedinasan', 'multiple']);
             $table->enum('role', ['student']);
